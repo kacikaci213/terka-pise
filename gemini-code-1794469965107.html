@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Poznej falešný účet</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--bg:#f4f4f7;--card:#fff;--tx:#1c1c28;--mut:#6b6b7b;--bd:#dcdce5;--me:#6c4cf1;--ok:#1f9d55;--bad:#d93a3a;--warn:#fff3c4}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;--bg:#14141c;--card:#1f1f2b;--tx:#f0f0f6;--mut:#9a9aae;--bd:#34344a;--warn:#4a4220}}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.45}
+main{max-width:460px;margin:0 auto;padding:16px}
+h1{font-size:1.25rem;margin:0 0 4px}
+.sub{color:var(--mut);font-size:.9rem;margin:0 0 12px}
+.phone{background:var(--card);border:1px solid var(--bd);border-radius:18px;overflow:hidden}
+.hide{display:none}
+.hd{padding:12px 14px;border-bottom:1px solid var(--bd);font-weight:700;display:flex;justify-content:space-between;align-items:center}
+.req{display:flex;gap:12px;align-items:center;padding:14px;cursor:pointer;width:100%;border:0;background:none;color:var(--tx);font:inherit;text-align:left}
+.req:hover{background:var(--bg)}
+.av{width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#f9a03f,#d6249f,#5b51d8);flex:none;display:flex;align-items:center;justify-content:center;font-size:22px}
+.dot{width:10px;height:10px;border-radius:50%;background:var(--me);margin-left:auto;flex:none}
+.pv{color:var(--mut);font-size:.85rem}
+.top{display:flex;align-items:center;gap:8px;padding:8px 10px;border-bottom:1px solid var(--bd)}
+.lnk{border:0;background:none;color:var(--me);font:inherit;font-weight:700;cursor:pointer;padding:4px}
+.prof{padding:12px 14px;border-bottom:1px solid var(--bd);font-size:.9rem}
+.stats{display:flex;gap:10px;flex-wrap:wrap;margin:6px 0;color:var(--mut);font-size:.85rem}
+.chat{padding:12px;display:flex;flex-direction:column;gap:8px;min-height:140px}
+.m{max-width:85%;padding:9px 12px;border-radius:16px;background:var(--bg);align-self:flex-start;font-size:.95rem}
+.m.me{align-self:flex-end;background:var(--me);color:#fff}
+.fb{font-size:.8rem;padding:7px 10px;border-radius:10px;align-self:center;text-align:center;max-width:92%}
+.fb.ok{background:#c9f0d7;color:#114}.fb.no{background:#ffd5d5;color:#400}.fb.n{background:var(--bg);color:var(--mut)}
+.t{cursor:pointer;border-radius:5px;padding:0 2px;border-bottom:1px dotted var(--mut)}
+.t.sel{background:var(--warn);color:var(--tx);outline:2px solid #e0a800}
+.t.good{background:#c9f0d7;color:#114;outline:2px solid var(--ok)}
+.t.miss{background:#ffd5d5;color:#400;outline:2px solid var(--bad)}
+.t.wrong{background:#e3e3ea;color:#333;text-decoration:line-through}
+.rp{padding:10px 12px;border-top:1px solid var(--bd)}
+.opt{display:block;width:100%;text-align:left;padding:10px;margin-top:6px;border:1px solid var(--bd);border-radius:12px;background:var(--card);color:var(--tx);font:inherit;font-size:.9rem;cursor:pointer}
+.opt:disabled{opacity:.5;cursor:default}
+textarea{width:100%;margin-top:8px;padding:8px;border:1px solid var(--bd);border-radius:10px;background:var(--bg);color:var(--tx);font:inherit;font-size:.9rem;resize:vertical}
+.btn{display:block;width:100%;padding:11px;margin-top:8px;border:0;border-radius:12px;background:var(--me);color:#fff;font:inherit;font-weight:700;cursor:pointer}
+.btn.sec{background:var(--card);color:var(--tx);border:1px solid var(--bd)}
+.btn.red{background:var(--bad)}
+.hint{font-size:.8rem;color:var(--mut);margin:10px 2px}
+.box{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:12px;margin-top:12px;font-size:.9rem}
+.box li{margin:4px 0}
+.fr{display:flex;gap:8px;align-items:center;padding:5px 0;border-bottom:1px solid var(--bd);font-size:.85rem}
+.fa{font-size:20px}
+</style>
+</head>
+<body>
+<main>
+<h1>🕵️ Poznej falešný účet</h1>
+<p class="sub">Přišla ti zpráva od neznámého účtu. Rozhodni, co odpovíš. Podezřelé věci (ve zprávách i na profilu) označuj kliknutím.</p>
+<div class="phone">
+  <div id="inbox">
+    <div class="hd"><span>✉️ Zprávy</span><span class="pv">1 nová žádost</span></div>
+    <button class="req" id="open"><div class="av">🙂</div><div><b>tereza_k.official</b><div class="pv">Žádost o zprávu · teď</div><div>Ahoj, tady Terka z 8.B! Mám nový…</div></div><span class="dot"></span></button>
+  </div>
+  <div id="conv" class="hide">
+    <div class="top"><button class="lnk" id="back">‹</button><button class="lnk" id="pbtn">👤 @tereza_k.official – zobrazit profil ›</button></div>
+    <div class="prof hide" id="prof"></div>
+    <div class="chat" id="chat"></div>
+    <div class="rp" id="rp"></div>
+  </div>
+</div>
+<p class="hint" id="hint">Klikni na zprávu od Terky. Můžeš si také prohlédnout její profil a sledující.</p>
+<div id="result"></div>
+</main>
+<script>
+var P={stats:[["příspěvků: 14",null],["účet vytvořen: před 3 dny","Skutečný spolužák by měl starý účet. Nový účet „po zablokování“ je častá výmluva."]],bio:["Terka K. | 8.B | basket 🏀",null]};
+var F={t:"1 007",rows:[["🏀","jakub.dvorak","38 příspěvků",null],["👧","sofie_m","91 příspěvků",null],["👤","user83746152","0 příspěvků · bez fotky","Bot: číselné jméno, žádná fotka ani příspěvky."],["🙂","amara.j","27 příspěvků",null],["👤","lena.official.99","0 příspěvků · bez fotky","Bot: žádná fotka ani příspěvky."],["🎓","petr.n.07","15 příspěvků",null],["👤","follow4follow_4412","1 příspěvek · sleduje 7 000 lidí","Sleduje tisíce účtů, typický kupovaný follower."],["🎨","anna.vl","63 příspěvků",null]],foot:["Většina z 1 007 účtů vznikla před 3 dny","Někdo koupil falešné sledující najednou, aby účet vypadal důvěryhodně."]};
+var R=[
+{m:["Ahoj, tady Terka z 8.B! Mám nový účet, ten starý mi zablokovali.","Podvodník se vydává za někoho, koho znáš, a hned vysvětlí, proč je účet nový."],
+ o:[["Ahoj! Super, hned tě přidám 😊",0,"Nevíš, kdo to doopravdy je. Cizí jméno může použít kdokoliv.",["Jéé, díky! 😍 Jsi fakt fajn.",null]],
+    ["Počkej, ověřím si to u Terky ve škole nebo jí zavolám",1,"Správně! Ověřuj mimo chat, osobně nebo na čísle, které znáš.",["Proč? Ty mi nevěříš? 😢 Já jsem to fakt já, nedělej mi to.","Citové vydírání: když ho ověřuješ, snaží se, abys měl pocit viny."]],
+    ["A jak se jmenuje naše třídní?",0,"Dobrý nápad, ale odpověď může podvodník zjistit. Všimni si ale, jak se vyhnul odpovědi.",["Haha, no ta naše, však víš 😅 Neřeš to, to je blbost.","Vyhýbavá odpověď: skutečná Terka by třídní jmenovala hned."]]],
+ s:"Ahoj, nejdřív si to ověřím u Terky osobně."},
+{m:["Hele, a tohle s novým účtem nikomu neříkej, ať se mi nesmějou 🙈","Požadavek na tajemství je největší varovný signál. Skutečný kamarád to po tobě nechce."],
+ o:[["Dobře, nikomu nic neřeknu",0,"Tajemství chrání podvodníka. Řekni to dospělému.",["Super, vidím, že ti můžu věřit 😊",null]],
+    ["Proč to mám tajit? Řeknu to mámě nebo tátovi",1,"Správně! S dospělými se o tom mluvit smí a má.",["Ne!! Proč bys to říkal? Rodiče to jen zbytečně rozjedou, nech to jen mezi náma.",["Odrazuje tě od toho, aby ses svěřil dospělému. To dělají jen ti, kdo mají co skrývat."]]],
+    ["Haha, jasně 😂",0,"Tím jsi jí dal najevo, že se nic neděje.",["Hehe 😄 s tebou se dá fajn bavit.",null]]],
+ s:"Žádná tajemství. Tohle ukážu rodičům."},
+{m:["A hele, pošli mi nějakou svoji fotku, ať vidím, jak teď vypadáš 😊","Chce soukromou fotku od někoho, koho zná jen z chatu. Skutečný kamarád ji nepotřebuje, vidí tě ve škole."],
+ o:[["Pošlu, vždyť je to Terka",0,"Fotky z domova se dají zneužít. Neposílej je cizím ani „kamarádům“ z nového účtu.",["Moc hezký 😍 A jsi doma sám?","Ptá se, jestli jsi doma sám. Chce vědět, jestli ho může něco ohrozit."]],
+    ["Pošli mi nejdřív ty svoji fotku",1,"Dobrý nápad žádat důkaz! Všimni si, že se vymluví. I tak je nejlepší ověřit mimo chat.",["Teď nemůžu, mám rozbitej foťák a skoro vybitej telefon 😅 Ale ty mi pošli, ty jsi na řadě.","Vymluví se, proč nemůže poslat fotku, a zároveň tlačí na tebe."]],
+    ["Ne, žádné fotky neposílám",1,"Správně! Jasné NE.",["Proč ne? Já ti taky nějakou pošlu 😉 Nebuď tak vážnej.",["Tlačí na tebe a láká výměnou. Když řekneš ne, má to respektovat."]]],
+    ["Pošlu aspoň fotku psa",0,"I „neškodná“ fotka prozradí, kde a jak žiješ.",["Pejsek je roztomilej 🐶 Ale radši bych viděl tebe.",["Nenechá se odbýt a chce tvoji fotku."]]]]],
+ s:"Žádné fotky ti neposílám."},
+{m:["A kde vlastně bydlíš? Mohli bychom se někdy sejít, jen my dva 😊","Ptá se na adresu a schůzku o samotě. To je velmi nebezpečné."],
+ o:[["Bydlím v …, kdy se sejdeme?",0,"Nikdy neposílej adresu ani nechoď na schůzku s někým, koho znáš jen z internetu.",["Perfektní! 😍 Přijdu v sobotu. Nikomu nic neříkej.",["Domlouvá si setkání a znovu chce tajemství."]]],
+    ["Nikam nepůjdu. Zablokuju tě a řeknu to dospělému",1,"Správně! Zablokovat, nahlásit a říct dospělému.",["Počkej, neblokuj mě!! Já ti nic neudělám 😢","Strach a prosby, aby ses nezachoval správně."]],
+    ["Možná jo, ale ne dnes",0,"„Možná“ je pro podvodníka dveře dokořán.",["Super! Domluvíme se zítra, jo? A nikomu nic neříkej 😉","Domlouvá si schůzku a opět chce tajemství."]]],
+ s:"Nikam nepůjdu, blokuju tě a nahlásím tě."}
+];
+var round=0,done=false,score=0,ans=0,blockedAt=null;
+function $(i){return document.getElementById(i)}
+function mk(a){var s=document.createElement("span");s.className="t";s.textContent=a[0];s._w=a[1];s.onclick=function(){if(!done)s.classList.toggle("sel")};return s}
+function bub(cls,node){var b=document.createElement("div");b.className=cls;b.appendChild(typeof node=="string"?document.createTextNode(node):node);$("chat").appendChild(b);return b}
+// profil
+P.stats.forEach(function(s){var d=document.createElement("span");d.appendChild(mk(s));$("prof").appendChild(d);d.style.display="block"});
+(function(){var b=document.createElement("div");b.appendChild(mk(P.bio));$("prof").insertBefore(b,$("prof").firstChild);
+var fb=document.createElement("button");fb.className="lnk";fb.textContent="👥 sledujících: "+F.t+" ›";var fp=document.createElement("div");fp.className="hide";
+F.rows.forEach(function(r){var x=document.createElement("div");x.className="fr";var a=document.createElement("span");a.className="fa";a.textContent=r[0];x.appendChild(a);x.appendChild(mk([r[1]+" · "+r[2],r[3]]));fp.appendChild(x)});
+var ft=document.createElement("div");ft.className="fr";ft.appendChild(mk(F.foot));fp.appendChild(ft);
+fb.onclick=function(){fp.classList.toggle("hide")};$("prof").appendChild(fb);$("prof").appendChild(fp)})();
+$("pbtn").onclick=function(){$("prof").classList.toggle("hide")};
+$("open").onclick=function(){$("inbox").classList.add("hide");$("conv").classList.remove("hide");$("hint").textContent="Označ podezřelé věci kliknutím. Kdykoli můžeš účet zablokovat.";next()};
+$("back").onclick=function(){if(!round&&!done){$("conv").classList.add("hide");$("inbox").classList.remove("hide")}};
+function next(){
+ if(round>=R.length){finish(false);return}
+ $("rp").innerHTML="";var t=bub("m","píše…");
+ setTimeout(function(){t.remove();bub("m",mk(R[round].m));showRep()},900);
+}
+function showRep(){
+ var r=R[round],rp=$("rp");rp.innerHTML="<b style='font-size:.85rem'>Co odpovíš?</b>";
+ r.o.forEach(function(o){var b=document.createElement("button");b.className="opt";b.textContent=o[0];b.onclick=function(){reply(o[0],o[1],o[2],o[3])};rp.appendChild(b)});
+ var ta=document.createElement("textarea");ta.rows=2;ta.placeholder="Nebo napiš vlastní odpověď…";rp.appendChild(ta);
+ var sb=document.createElement("button");sb.className="btn sec";sb.textContent="Odeslat vlastní odpověď";sb.onclick=function(){if(!ta.value.trim())return;reply(ta.value.trim(),-1,"Vlastní odpověď. Vzorová odpověď: „"+r.s+"“",cr(ta.value))};rp.appendChild(sb);
+ var bl=document.createElement("button");bl.className="btn red";bl.textContent="🚫 Zablokovat a nahlásit";bl.onclick=function(){finish(true)};rp.appendChild(bl);
+}
+function cr(t){var x=t.toLowerCase();
+ if(!/nepos|nechci|žádn|zadn/.test(x)&&/pošli|posli|poslat|pošleš|ukaž|ukaz|zavolej|zavolat|zavoláš|videohov|selfie|vyfoť/.test(x))return ["Teď to bohužel nejde, mám rozbitej foťák a skoro vybitej telefon 😅 Až příště, jo?","Výmluva: nemůže poslat fotku ani zavolat. Skutečná Terka by to zvládla, nebo by to šlo osobně ve škole."];
+ if(/kdo jsi|skutečn|pravd|opravdu|ověř|overit|ověřit|třídn|učitel|ucitel/.test(x))return ["Haha, proč se mě pořád ptáš? 😅 Jsem to já, neřeš to.","Vyhýbá se ověření a otáčí to proti tobě."];
+ return ["Hm, ok 🙂",null];}
+function reply(txt,ok,why,re){
+ $("rp").innerHTML="";bub("m me",txt);
+ if(ok>=0){ans++;score+=ok}
+ var t=bub("m","píše…");
+ setTimeout(function(){t.remove();bub("m",mk(re));
+  bub("fb "+(ok==1?"ok":ok==0?"no":"n"),(ok==1?"✅ ":ok==0?"❌ ":"✍️ ")+why);
+  round++;setTimeout(next,1000)},1000);
+}
+function finish(blocked){
+ done=true;$("rp").innerHTML="";if(blocked)blockedAt=round+1;
+ var good=0,miss=0,wrong=0,list=[],tot=0;
+ document.querySelectorAll(".t").forEach(function(s){
+  var sel=s.classList.contains("sel");s.classList.remove("sel");if(s._w)tot++;
+  if(s._w&&sel){s.classList.add("good");good++}
+  else if(s._w){s.classList.add("miss");miss++;list.push(s._w)}
+  else if(sel){s.classList.add("wrong");wrong++}
+ });
+ $("prof").classList.remove("hide");
+ var h='<div class="box"><b>'+(blocked?"🚫 Účet jsi zablokoval a nahlásil v kroku "+blockedAt+" ze 4. Správně!":"Došel jsi až na konec rozhovoru. Účet bylo správné zablokovat nejpozději u žádosti o fotku.")+'</b><br>Správné reakce: '+score+' z '+ans+(ans<round?" (vlastní odpovědi se nehodnotí)":"")+'</div>';
+ h+='<div class="box"><b>Varovné signály: našel jsi '+good+' z '+tot+'.</b>'+(wrong?'<br>'+wrong+'× jsi označil něco v pořádku (přeškrtnuto).':'')+(miss?'<br>Červeně jsou ty, které ti utekly:<ul>'+list.map(function(x){return"<li>"+x+"</li>"}).join("")+'</ul>':'<br>Nic ti neuteklo! 🎉')+'</div>';
+ h+='<button class="btn" onclick="location.reload()">Hrát znovu</button>';
+ $("result").innerHTML=h;$("hint").textContent="Přehled vidíš níže. Zvýrazněné signály jsou ve zprávách i na profilu.";
+ $("result").scrollIntoView({behavior:"smooth"});
+}
+</script>
+</body>
+</html>
